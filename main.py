@@ -1,15 +1,11 @@
-from fastapi import FastAPI
-from fastapi import HTTPException
-import requests
+from fastapi import FastAPI, Query
+import httpx
 
 app = FastAPI()
 
-@app.get("/server-info/{server_id}")
-def get_server_info(server_id: str):
-    url = f"https://api.battlemetrics.com/servers/{server_id}"
-    response = requests.get(url)
-    
-    if response.status_code != 200:
-        raise HTTPException(status_code=404, detail="Server not found")
-    
+@app.get("/servers")
+async def search_servers(name: str = Query(...)):
+    url = f"https://api.battlemetrics.com/servers?filter[search]={name}"
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
     return response.json()
