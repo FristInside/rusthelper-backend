@@ -3,10 +3,12 @@ import requests
 
 app = FastAPI()
 
+
 @app.get("/search")
-def search_servers(name: str = Query(...)):
-    url = f"https://api.battlemetrics.com/servers?filter[search]={name}"
+def search_servers(name: str):
+    url = f"https://api.battlemetrics.com/servers?filter[search]={name}&filter[game]=rust"
     response = requests.get(url)
+    return response.json()["data"]
 
     if response.status_code != 200:
         return {"error": "API error"}
